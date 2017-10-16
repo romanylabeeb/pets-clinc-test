@@ -1,50 +1,69 @@
-# springboot-sample-app
+enhanced-pet-clinic
+===================
 
-[![Build Status](https://travis-ci.org/codecentric/springboot-sample-app.svg?branch=master)](https://travis-ci.org/codecentric/springboot-sample-app)
-[![Coverage Status](https://coveralls.io/repos/github/codecentric/springboot-sample-app/badge.svg?branch=master)](https://coveralls.io/github/codecentric/springboot-sample-app?branch=master)
-[![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+Spring Pet Clinic example using Spring-Boot, Thymeleaf, AOP, MVC, Embedded Tomcat, Security, and more.
 
-Minimal [Spring Boot](http://projects.spring.io/spring-boot/) sample app.
+## Technology stack
 
-## Requirements
+ - Spring Boot
+ - Thymeleaf
+ - Dandelion-Datatables 0.10.0
+ - Hibernate Validator
+ - WebJars
+ - Tomcat 8
 
-For building and running the application you need:
+## Spring Features
 
-- [JDK 1.8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-- [Maven 3](https://maven.apache.org)
+ - Spring JavaConfig
+ - Spring Security
+ - Spring MVC
+ - Spring JPA
+ - Spring AOP
 
-## Running the application locally
+## To run this application
 
-There are several ways to run a Spring Boot application on your local machine. One way is to execute the `main` method in the `de.codecentric.springbootsample.Application` class from your IDE.
+Using __Embedded Apache Tomcat__:
 
-Alternatively you can use the [Spring Boot Maven plugin](https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-maven-plugin.html) like so:
+	mvn spring-boot:run
 
-```shell
-mvn spring-boot:run
-```
+You can then access the sample here: [http://localhost:8080/](http://localhost:8080/)
 
-## Deploying the application to OpenShift
+Logins are found in [data.sql](src/main/resources/data.sql). Passwords are the same as the user name.
 
-The easiest way to deploy the sample application to OpenShift is to use the [OpenShift CLI](https://docs.openshift.org/latest/cli_reference/index.html):
+## Spring Boot Remote Shell
 
-```shell
-oc new-app codecentric/springboot-maven3-centos~https://github.com/codecentric/springboot-sample-app
-```
+To access this application via SSH, use the username sshuser with password sshpassword on port 2000.
 
-This will create:
+Example: ssh -p 2000 sshuser@localhost
 
-* An ImageStream called "springboot-maven3-centos"
-* An ImageStream called "springboot-sample-app"
-* A BuildConfig called "springboot-sample-app"
-* DeploymentConfig called "springboot-sample-app"
-* Service called "springboot-sample-app"
+Type help for a list of commands. See [http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready-remote-shell](Monitoring and management using a remote shell).
 
-If you want to access the app from outside your OpenShift installation, you have to expose the springboot-sample-app service:
+### Use of Profiles
 
-```shell
-oc expose springboot-sample-app --hostname=www.example.com
-```
+For the sake of simplicity, there are 3 profiles:
+  * dev
+	* in-memory database (auto-generated HSQLDB with sample data), HTTP (8080) interface only, actuator features are open
+  * test
+	* external database (auto-generated MySQL with sample data), HTTP (8080) and HTTPS (8443) interfaces, actuator is open
+  * live
+	* external database (assumes existing MySQL with data), HTTPS (8443) interface only, actuator is secured
 
-## Copyright
+Use different databases depending on profile.
+[Database Initialization](http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#howto-database-initialization)
 
-Released under the Apache License 2.0. See the [LICENSE](https://github.com/codecentric/springboot-sample-app/blob/master/LICENSE) file.
+## HTTP POST vs. PUT
+I removed all PUT requests from the application. Please see http://zacharyvoase.com/2009/07/03/http-post-put-diff/ for more information.
+
+## TODO / To Fix
+
+### Spring Boot Auditing
+
+Add implementation for a lock-out policy based on authentication failures.
+
+### Packaging executable jar application
+
+This works, with the caveat that the embedded Tomcat cannot find the keystore in the embedded JAR file, which means the file must be found in the file system and must be properly referenced from application.properties.
+
+### "Whitelabel" Error Page
+
+Ensure error handling is happening properly.
